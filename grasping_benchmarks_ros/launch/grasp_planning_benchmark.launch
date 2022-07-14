@@ -1,7 +1,7 @@
 <launch>
 
   <!-- Run Dexnet Grasp Planner -->
-  <group if="$(env GRASP_BENCHMARK_DEXNET)">
+  <group if="$(optenv GRASP_BENCHMARK_DEXNET false)">
 
     <arg name="ns"  default="dexnet_bench" />
     <arg name="grasp_planner_service_name"        default="dexnet_grasp_planner_service" />
@@ -28,7 +28,7 @@
   </group>
 
   <!-- Run GPD Grasp Planner -->
-  <group if="$(env GRASP_BENCHMARK_GPD)">
+  <group if="$(optenv GRASP_BENCHMARK_GPD false)">
 
     <arg name="ns"  default="gpd_bench" />
     <arg name="grasp_planner_node_name" default="gpd_grasp_planner" />
@@ -51,7 +51,7 @@
   </group>
 
   <!-- Run Superquadrics-based Grasp Planner -->
-  <group if="$(env GRASP_BENCHMARK_SUPERQUADRICS)">
+  <group if="$(optenv GRASP_BENCHMARK_SUPERQUADRICS false)">
 
     <arg name="ns"                        default="superquadric_bench" />
     <arg name="grasp_planner_node_name"   default="superq_grasp_planner" />
@@ -73,7 +73,7 @@
   </group>
 
   <!-- Run GraspNet Grasp Planner -->
-  <group if="$(env GRASP_BENCHMARK_GRASPNET)" >
+  <group if="$(optenv GRASP_BENCHMARK_GRASPNET false)" >
 
     <!-- Planner params -->
     <arg name="ns"                          default="graspnet_bench" />

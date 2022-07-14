@@ -214,4 +214,4 @@ COPY entrypoint.sh /usr/sbin/entrypoint.sh
 RUN chmod 755 /usr/sbin/setup.sh
 RUN chmod 755 /usr/sbin/entrypoint.sh
 ENTRYPOINT ["/usr/sbin/entrypoint.sh"]
-CMD ["bash"]
+CMD ["roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"]
