@@ -162,8 +162,7 @@ ENV GRASPNET_DIR=${WS_SOURCES}/6dof-graspnet
 # # ==========================
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
-    git clone https://github.com/hsp-panda/panda_ros_common &&\
-    git clone https://github.com/hsp-panda/grasping-benchmarks-panda.git &&\
+    git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
     pip3 install grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     rosdep update &&\
@@ -185,6 +184,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # Image initialization
 # ====================
 ENV USERNAME=docker
+
+# Grasp Planner Definition
+ENV GRASP_BENCHMARK_GRASPNET=true
 
 # Include a custom bashrc
 COPY bashrc /usr/etc/skel/bashrc-dev

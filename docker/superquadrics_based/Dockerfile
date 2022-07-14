@@ -220,8 +220,7 @@ RUN apt-get update &&\
 #RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
-    git clone https://github.com/hsp-panda/panda_ros_common &&\
-    git clone https://github.com/hsp-panda/grasping-benchmarks-panda.git &&\
+    git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
     pip3 install grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DGPD_ROS=OFF && \
@@ -245,6 +244,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # ====================
 
 ENV USERNAME=docker
+
+# Grasp Planner Definition
+ENV GRASP_BENCHMARK_SUPERQUADRICS=true
 
 # Include a custom bashrc
 COPY bashrc /usr/etc/skel/bashrc-dev
