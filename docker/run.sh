@@ -90,8 +90,8 @@ then
         --network=host \
         --privileged \
         $IMAGENAME \
-        bash
+        bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 else
     docker start $CONTAINERNAME > /dev/null
-    docker exec -it -u $USERNAME $CONTAINERNAME bash
+    docker exec -it -u $USERNAME $CONTAINERNAME bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 fi
