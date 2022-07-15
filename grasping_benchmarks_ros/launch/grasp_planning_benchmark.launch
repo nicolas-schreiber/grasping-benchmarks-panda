@@ -59,7 +59,7 @@
     <arg name="grasp_planner_service_name"        default="superq_grasp_planner_service" />
     <arg name="grasp_planner_service"             default="GraspPlannerCloud" />
     <arg name="grasp_publisher_name"              default="candidate_grasp" />
-    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/superquadric_based_ros/cfg/config_panda.yaml" />
+    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/superquadrics_based_ros/cfg/config_panda.yaml" />
 
     <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.0]" />
 
