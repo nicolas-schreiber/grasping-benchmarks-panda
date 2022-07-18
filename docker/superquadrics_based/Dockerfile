@@ -198,7 +198,7 @@ ENV PYTHONPATH=${PYTHONPATH}:${WS_INSTALL}/lib/superquadriclib/bindings
 # Create catkin_ws with dependencies/ros packages for python3
 # ===========================================================
 RUN apt-get update &&\
-    pip3 install pyyaml &&\
+    pip3 install PyYAML==5.1 &&\
     sudo apt-get install -y libboost-all-dev &&\
     mkdir -p ${CATKIN_WS_DIR}/src && \
     cd ${CATKIN_WS_DIR} &&\

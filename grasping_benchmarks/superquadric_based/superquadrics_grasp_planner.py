@@ -158,7 +158,8 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
         # ------------------- #
         self._camera_data.extrinsic_params['position'] = cam_pos
         self._camera_data.extrinsic_params['rotation'] = robot_R_cam
-
+        
+        self._camera_data.intrinsic_params = {}
         self._camera_data.intrinsic_params['cam_frame'] = cam_frame
 
         return self._camera_data
