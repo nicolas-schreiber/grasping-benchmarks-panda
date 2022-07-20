@@ -295,7 +295,7 @@ class DexnetGraspPlanner(BaseGraspPlanner):
                                   np.ones(depth_im.shape).astype(np.uint8),
                                   frame=color_im.frame)
         else:
-            segmask = camera_data.seg_mask
+            segmask = camera_data.seg_img
 
 
         # --- Aggregate color and depth images into a single
