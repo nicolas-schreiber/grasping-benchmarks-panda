@@ -80,7 +80,7 @@ class DexnetGraspPlannerService(DexnetGraspPlanner):
         # Get the raw depth and color images as ROS `Image` objects.
         raw_color = req.color_image
         raw_depth = req.depth_image
-        raw_seg   = req.seg_img
+        raw_seg   = req.seg_image
 
         # Get the raw camera info as ROS `CameraInfo`.
         raw_camera_info = req.camera_info
@@ -113,7 +113,7 @@ class DexnetGraspPlannerService(DexnetGraspPlanner):
 
             depth_im = DepthImage(cv2_depth, frame=camera_intr.frame)
 
-            seg_img = BinaryImage(self.cv_bridge.imgmsg_to_cv2(raw_seg, desired_encoding="passthrough"), threshold=0)
+            seg_img = BinaryImage(self.cv_bridge.imgmsg_to_cv2(raw_seg, desired_encoding="passthrough"), threshold=0, frame=camera_intr.frame)
 
         except CvBridgeError as cv_bridge_exception:
             print("except CvBridgeError")
