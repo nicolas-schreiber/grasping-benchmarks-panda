@@ -342,8 +342,6 @@ class DexnetGraspPlanner(BaseGraspPlanner):
             # --- project planar grasps to 3D space --- #
             l = []
             for gp in grasps_and_predictions:
-                
-                print(f"GRASP_POSE DEPTH {depth_im.raw_data[gp.grasp_pose.center[0]][gp.grasp_pose.center[1]]}, {gp.depth}")
                 # my method
                 pose_6d = self.transform_grasp_to_6D(gp[0], camera_data.intrinsic_params)
                 pos = pose_6d[:3,3]
@@ -379,6 +377,7 @@ class DexnetGraspPlanner(BaseGraspPlanner):
             vis.show()
         if self.cfg["vis"]["depth_image"]:
             vis.imshow(self._camera_data.depth_img)
+            vis.grasp(self._dexnet_gp[0][0], scale=2.5, show_center=True, show_axis=True)
             vis.show()
 
         if self.cfg["vis"]["segmask"]:

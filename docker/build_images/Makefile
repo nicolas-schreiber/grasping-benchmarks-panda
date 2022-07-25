@@ -26,6 +26,6 @@ superquadrics:
 
 6dgraspnet:
 	docker build --rm \
-		--build-arg from=nvidia/cuda:11.7.0-runtime-ubuntu18.04 \
+		--build-arg from=nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 \
 		--tag $(USER_NAME)/benchmark_6dgraspnet:latest \
 		../6dgraspnet/
