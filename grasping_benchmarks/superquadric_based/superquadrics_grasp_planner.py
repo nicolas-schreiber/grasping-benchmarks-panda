@@ -295,7 +295,7 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
             return False
 
         gp = self._grasp_res.grasp_poses[0]
-        if np.linalg.norm((gp.position[0][0], gp.position[1][0], gp.position[2][0])) == 0.:
+        if np.linalg.norm((gp.position[0][0], gp.position[0][1], gp.position[0][2])) == 0.:
             return False
 
         # --- Estimate pose cost --- #

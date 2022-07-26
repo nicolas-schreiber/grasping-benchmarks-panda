@@ -221,7 +221,7 @@ RUN apt-get update &&\
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
     git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
-    pip3 install grasping-benchmarks-panda/ &&\
+    pip3 install -e grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DGPD_ROS=OFF && \
     catkin build  -j8 && \
