@@ -237,6 +237,14 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
             Object storing info required by plan_grasp()
         """
 
+
+        camera_data = CameraData()
+        camera_data.rgb_img = rgb_image
+        camera_data.depth_img = depth_image
+        intrinsic_matrix = np.array([[fx, skew,  cx],
+                                     [0,    fy,  cy],
+                                     [0,     0,   1]])
+
         print({'fx' : fx,
                'fy' : fy,
                'cx' : cx,
@@ -252,12 +260,6 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
                'depth_image': depth_image.shape,
                'obj_cloud': obj_cloud == None})
 
-        camera_data = CameraData()
-        camera_data.rgb_img = rgb_image
-        camera_data.depth_img = depth_image
-        intrinsic_matrix = np.array([[fx, skew,  cx],
-                                     [0,    fy,  cy],
-                                     [0,     0,   1]])
         camera_data.intrinsic_params = {
                                         'fx' : fx,
                                         'fy' : fy,
