@@ -347,7 +347,7 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
         robot_base_T_icub_gp = np.matmul(robot_base_T_icub_base, icub_base_T_icub_gp)
         icub_gp_T_panda_gp = np.eye(4)
         # icub_gp_T_panda_gp[2,3] = -0.10
-        grasp_target_T_panda_ef[:3, 3] = self._grasp_offset
+        icub_gp_T_panda_gp[:3, 3] = self._grasp_offset
 
         # --- transform grasp pose from icub hand ref frame to robot hand ref frame --- #
         robot_base_T_robot_gp = np.matmul(robot_base_T_icub_gp, self._icub_hand_T_robot_hand)

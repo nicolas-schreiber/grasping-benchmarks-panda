@@ -26,6 +26,6 @@ superquadrics:
 
 6dgraspnet:
 	docker build --rm \
-		--build-arg from=nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 \
+		--build-arg from=nvcr.io/nvidia/tensorflow:22.07-tf1-py3 \
 		--tag $(USER_NAME)/benchmark_6dgraspnet:latest \
 		../6dgraspnet/
