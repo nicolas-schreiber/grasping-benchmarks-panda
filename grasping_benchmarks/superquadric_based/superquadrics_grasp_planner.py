@@ -336,9 +336,9 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
 
         robot_base_T_icub_base = np.linalg.inv(self._icub_base_T_robot_base)
 
-        icub_gp_ax = [gp.axisangle[0][0], gp.axisangle[1][0], gp.axisangle[2][0],
-                      gp.axisangle[3][0]]
-        icub_gp_pos = [gp.position[0][0], gp.position[1][0], gp.position[2][0]]
+        icub_gp_ax = [gp.axisangle[0][0], gp.axisangle[0][1], gp.axisangle[0][2],
+                      gp.axisangle[0][3]]
+        icub_gp_pos = [gp.position[0][0], gp.position[0][1], gp.position[0][2]]
 
         icub_base_T_icub_gp = np.eye(4)
         icub_base_R_icub_gp = tr.quaternion_to_matrix(tr.axis_angle_to_quaternion(icub_gp_ax))
