@@ -198,7 +198,7 @@ ENV PYTHONPATH=${PYTHONPATH}:${WS_INSTALL}/lib/superquadriclib/bindings
 # Create catkin_ws with dependencies/ros packages for python3
 # ===========================================================
 RUN apt-get update &&\
-    pip3 install pyyaml &&\
+    pip3 install PyYAML==5.1 &&\
     sudo apt-get install -y libboost-all-dev &&\
     mkdir -p ${CATKIN_WS_DIR}/src && \
     cd ${CATKIN_WS_DIR} &&\
@@ -220,9 +220,8 @@ RUN apt-get update &&\
 #RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
-    git clone https://github.com/hsp-panda/panda_ros_common &&\
-    git clone https://github.com/hsp-panda/grasping-benchmarks-panda.git &&\
-    pip3 install grasping-benchmarks-panda/ &&\
+    git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
+    pip3 install -e grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DGPD_ROS=OFF && \
     catkin build  -j8 && \
@@ -245,6 +244,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # ====================
 
 ENV USERNAME=docker
+
+# Grasp Planner Definition
+ENV GRASP_BENCHMARK_SUPERQUADRICS=true
 
 # Include a custom bashrc
 COPY bashrc /usr/etc/skel/bashrc-dev

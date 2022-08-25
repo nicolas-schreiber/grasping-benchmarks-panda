@@ -295,7 +295,7 @@ class DexnetGraspPlanner(BaseGraspPlanner):
                                   np.ones(depth_im.shape).astype(np.uint8),
                                   frame=color_im.frame)
         else:
-            segmask = camera_data.seg_mask
+            segmask = camera_data.seg_img
 
 
         # --- Aggregate color and depth images into a single
@@ -342,7 +342,6 @@ class DexnetGraspPlanner(BaseGraspPlanner):
             # --- project planar grasps to 3D space --- #
             l = []
             for gp in grasps_and_predictions:
-
                 # my method
                 pose_6d = self.transform_grasp_to_6D(gp[0], camera_data.intrinsic_params)
                 pos = pose_6d[:3,3]
@@ -378,6 +377,7 @@ class DexnetGraspPlanner(BaseGraspPlanner):
             vis.show()
         if self.cfg["vis"]["depth_image"]:
             vis.imshow(self._camera_data.depth_img)
+            vis.grasp(self._dexnet_gp[0][0], scale=2.5, show_center=True, show_axis=True)
             vis.show()
 
         if self.cfg["vis"]["segmask"]:

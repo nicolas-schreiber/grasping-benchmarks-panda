@@ -192,6 +192,7 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
         self.cfg_grasp_estimator['threshold'] = self.cfg_ns.threshold
         self.cfg_grasp_estimator['sample_based_improvement'] = 1 - int(self.cfg_ns.gradient_based_refinement)
         self.cfg_grasp_estimator['num_refine_steps'] = 10 if self.cfg_ns.gradient_based_refinement else 20
+        self.cfg_grasp_estimator['num_samples'] = 200
 
 
 
@@ -235,6 +236,7 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
         CameraData
             Object storing info required by plan_grasp()
         """
+
 
         camera_data = CameraData()
         camera_data.rgb_img = rgb_image

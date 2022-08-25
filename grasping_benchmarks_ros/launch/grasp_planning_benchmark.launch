@@ -1,19 +1,7 @@
 <launch>
 
-  <arg name="gpd"           default="false" />
-  <arg name="superquadrics" default="false" />
-  <arg name="graspnet"      default="false" />
-  <arg name="dexnet"        default="false"  />
-  <arg name="realsense"     default="false"  />
-
-  <!-- Launch realsense camera -->
-  <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" if="$(arg realsense)">
-    <arg name="align_depth"         value="true"/>
-    <arg name="enable_pointcloud"   value="true"/>
-  </include>
-
   <!-- Run Dexnet Grasp Planner -->
-  <group if="$(arg dexnet)">
+  <group if="$(optenv GRASP_BENCHMARK_DEXNET false)">
 
     <arg name="ns"  default="dexnet_bench" />
     <arg name="grasp_planner_service_name"        default="dexnet_grasp_planner_service" />
@@ -37,19 +25,10 @@
       <rosparam param="grasp_pose_offset"               subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
-    <!-- Launch Manager -->
-    <arg name="user_cmd_service_name"              default="user_cmd" />
-
-    <node name="grasp_benchmark_manager" pkg="grasping_benchmarks_ros" type="benchmark_ros_manager.py" ns="$(arg ns)" output="screen">
-        <param name="user_cmd_service_name"        value="$(arg user_cmd_service_name)" />
-        <param name="grasp_planner_service_name"    value="$(arg grasp_planner_service_name)" />
-        <param name="grasp_planner_service"         value="$(arg grasp_planner_service)" />
-    </node>
-
   </group>
 
   <!-- Run GPD Grasp Planner -->
-  <group if="$(arg gpd)">
+  <group if="$(optenv GRASP_BENCHMARK_GPD false)">
 
     <arg name="ns"  default="gpd_bench" />
     <arg name="grasp_planner_node_name" default="gpd_grasp_planner" />
@@ -69,19 +48,10 @@
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
-    <!-- Launch Manager -->
-    <arg name="user_cmd_service_name"              default="user_cmd" />
-
-    <node name="grasp_benchmark_manager" pkg="grasping_benchmarks_ros" type="benchmark_ros_manager.py" ns="$(arg ns)" output="screen">
-        <param name="user_cmd_service_name"         value="$(arg user_cmd_service_name)" />
-        <param name="grasp_planner_service_name"    value="$(arg grasp_planner_node_name)/$(arg grasp_planner_service_name)" />
-        <param name="grasp_planner_service"         value="$(arg grasp_planner_service)" />
-    </node>
-
   </group>
 
   <!-- Run Superquadrics-based Grasp Planner -->
-  <group if="$(arg superquadrics)">
+  <group if="$(optenv GRASP_BENCHMARK_SUPERQUADRICS false)">
 
     <arg name="ns"                        default="superquadric_bench" />
     <arg name="grasp_planner_node_name"   default="superq_grasp_planner" />
@@ -89,7 +59,7 @@
     <arg name="grasp_planner_service_name"        default="superq_grasp_planner_service" />
     <arg name="grasp_planner_service"             default="GraspPlannerCloud" />
     <arg name="grasp_publisher_name"              default="candidate_grasp" />
-    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/superquadric_based_ros/cfg/config_panda.yaml" />
+    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/superquadrics_based_ros/cfg/config_panda.yaml" />
 
     <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.0]" />
 
@@ -100,19 +70,10 @@
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
-    <!-- Launch Manager -->
-    <arg name="user_cmd_service_name"              default="user_cmd" />
-
-    <node name="grasp_benchmark_manager" pkg="grasping_benchmarks_ros" type="benchmark_ros_manager.py" ns="$(arg ns)" output="screen">
-        <param name="user_cmd_service_name"         value="$(arg user_cmd_service_name)" />
-        <param name="grasp_planner_service_name"    value="$(arg grasp_planner_service_name)" />
-        <param name="grasp_planner_service"         value="$(arg grasp_planner_service)" />
-    </node>
-
   </group>
 
   <!-- Run GraspNet Grasp Planner -->
-  <group if="$(arg graspnet)" >
+  <group if="$(optenv GRASP_BENCHMARK_GRASPNET false)" >
 
     <!-- Planner params -->
     <arg name="ns"                          default="graspnet_bench" />
@@ -131,16 +92,6 @@
       <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
       <param name="config_file"                         value="$(arg config_file)" />
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
-    </node>
-
-    <!-- Manager params -->
-    <arg name="user_cmd_service_name"              default="user_cmd" />
-
-    <!-- Launch Manager -->
-    <node name="grasp_benchmark_manager" pkg="grasping_benchmarks_ros" type="benchmark_ros_manager.py" ns="$(arg ns)" output="screen">
-        <param name="user_cmd_service_name"         value="$(arg user_cmd_service_name)" />
-        <param name="grasp_planner_service_name"    value="$(arg grasp_planner_service_name)" />
-        <param name="grasp_planner_service"         value="$(arg grasp_planner_service)" />
     </node>
 
   </group>

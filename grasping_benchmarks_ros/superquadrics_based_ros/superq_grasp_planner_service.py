@@ -5,6 +5,8 @@
 # This software may be modified and distributed under the terms of the
 # LGPL-2.1+ license. See the accompanying LICENSE file for details.
 
+from typing import Tuple
+
 import json
 import math
 import os
@@ -19,7 +21,7 @@ from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2
 
-from grasping_benchmarks_ros.srv import GraspPlanner
+from grasping_benchmarks_ros.srv import GraspPlanner, GraspPlannerRequest, GraspPlannerResponse
 from grasping_benchmarks_ros.msg import BenchmarkGrasp
 
 import superquadric_bindings  as sb
@@ -103,6 +105,8 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
         if len(self.grasp_poses) == 0:
             return False
 
+        response = GraspPlannerResponse()
+
         # --- Create `BenchmarkGrasp` return message --- #
         grasp_msg = BenchmarkGrasp()
 
@@ -148,7 +152,8 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
             # pose in Rviz.
             self.grasp_pose_publisher.publish(p)
 
-        return grasp_msg
+        response.grasp_candidates.append(grasp_msg)
+        return response
 
     def npy_from_pc2(self, pc : PointCloud2) -> Tuple[np.ndarray, np.ndarray]:
         """Conversion from PointCloud2 to a numpy format

@@ -18,8 +18,6 @@ RUN apt-get update &&\
         curl \
         nano \
         unzip \
-        libgl1-mesa-glx \
-        libgl1-mesa-dri \
         apt-transport-https \
         apt-utils \
         dbus-x11 \
@@ -41,7 +39,6 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
         gcc-8 \
         g++-8 \
         cmake \
-        cmake-curses-gui \
         build-essential \
         &&\
     rm -rf /var/lib/apt/lists/*
@@ -61,7 +58,7 @@ RUN apt-get update &&\
 
 # Install python3
 # ===============
-ENV PYTHON_VERSION=3.6
+ENV PYTHON_VERSION=3.7
 RUN add-apt-repository ppa:deadsnakes/ppa &&\
     apt-get update &&\
     apt-get install -y --no-install-recommends \
@@ -90,7 +87,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com \
     apt-get update &&\
     apt-get install -y --no-install-recommends \
         ros-${ROS_DISTRO}-desktop-full \
-	ros-${ROS_DISTRO}-jsk-tools \
+	    ros-${ROS_DISTRO}-jsk-tools \
         python-rosdep \
         python-rosinstall \
         python-rosinstall-generator \
@@ -137,14 +134,14 @@ RUN apt-get update && \
     numpy \
     scipy \
     matplotlib \
-    tensorflow-gpu==1.14.0 \
+    tensorflow-gpu==1.15.0 \
     scikit-build \
     scikit-learn \
     scikit-image \
     gputil \
     psutil \
     opencv-python \
-    autolab-perception==0.0.8 \
+    autolab-perception==1.0.0 \
     autolab-core \
     visualization \
     &&\
@@ -182,9 +179,8 @@ RUN mkdir -p ${CATKIN_WS_DIR}/src && \
 #RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
-    git clone https://github.com/hsp-panda/panda_ros_common &&\
-    git clone https://github.com/hsp-panda/grasping-benchmarks-panda.git &&\
-    pip3 install grasping-benchmarks-panda/ &&\
+    git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
+    pip3 install -e grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DGPD_ROS=OFF && \
     catkin build  -j8 && \
@@ -204,6 +200,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # ====================
 ENV USERNAME=docker
 
+# Grasp Planner Definition
+ENV GRASP_BENCHMARK_DEXNET=true
+
 # Include a custom bashrc
 COPY bashrc /usr/etc/skel/bashrc-dev
 
@@ -212,4 +211,4 @@ COPY entrypoint.sh /usr/sbin/entrypoint.sh
 RUN chmod 755 /usr/sbin/setup.sh
 RUN chmod 755 /usr/sbin/entrypoint.sh
 ENTRYPOINT ["/usr/sbin/entrypoint.sh"]
-CMD ["bash"]
+CMD ["roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"]

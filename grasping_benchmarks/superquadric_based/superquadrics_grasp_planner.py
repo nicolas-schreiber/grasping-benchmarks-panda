@@ -158,7 +158,8 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
         # ------------------- #
         self._camera_data.extrinsic_params['position'] = cam_pos
         self._camera_data.extrinsic_params['rotation'] = robot_R_cam
-
+        
+        self._camera_data.intrinsic_params = {}
         self._camera_data.intrinsic_params['cam_frame'] = cam_frame
 
         return self._camera_data
@@ -294,7 +295,7 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
             return False
 
         gp = self._grasp_res.grasp_poses[0]
-        if np.linalg.norm((gp.position[0][0], gp.position[1][0], gp.position[2][0])) == 0.:
+        if np.linalg.norm((gp.position[0][0], gp.position[0][1], gp.position[0][2])) == 0.:
             return False
 
         # --- Estimate pose cost --- #
@@ -335,9 +336,9 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
 
         robot_base_T_icub_base = np.linalg.inv(self._icub_base_T_robot_base)
 
-        icub_gp_ax = [gp.axisangle[0][0], gp.axisangle[1][0], gp.axisangle[2][0],
-                      gp.axisangle[3][0]]
-        icub_gp_pos = [gp.position[0][0], gp.position[1][0], gp.position[2][0]]
+        icub_gp_ax = [gp.axisangle[0][0], gp.axisangle[0][1], gp.axisangle[0][2],
+                      gp.axisangle[0][3]]
+        icub_gp_pos = [gp.position[0][0], gp.position[0][1], gp.position[0][2]]
 
         icub_base_T_icub_gp = np.eye(4)
         icub_base_R_icub_gp = tr.quaternion_to_matrix(tr.axis_angle_to_quaternion(icub_gp_ax))
@@ -346,7 +347,7 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
         robot_base_T_icub_gp = np.matmul(robot_base_T_icub_base, icub_base_T_icub_gp)
         icub_gp_T_panda_gp = np.eye(4)
         # icub_gp_T_panda_gp[2,3] = -0.10
-        grasp_target_T_panda_ef[:3, 3] = self._grasp_offset
+        icub_gp_T_panda_gp[:3, 3] = self._grasp_offset
 
         # --- transform grasp pose from icub hand ref frame to robot hand ref frame --- #
         robot_base_T_robot_gp = np.matmul(robot_base_T_icub_gp, self._icub_hand_T_robot_hand)

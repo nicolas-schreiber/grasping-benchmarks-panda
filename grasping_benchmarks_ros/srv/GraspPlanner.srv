@@ -3,6 +3,7 @@
 # color and depth images
 sensor_msgs/Image color_image
 sensor_msgs/Image depth_image
+sensor_msgs/Image seg_image
 
 # camera info and intrinsics
 sensor_msgs/CameraInfo camera_info

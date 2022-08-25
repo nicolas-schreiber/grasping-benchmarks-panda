@@ -80,7 +80,7 @@ RUN python3 -m pip install --upgrade pip
 # ========================
 
 # https://github.com/osrf/docker_images/blob/master/ros/
-ENV ROS_DISTRO=melodic
+ENV ROS_DISTRO=noetic
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com \
                 --recv-keys F42ED6FBAB17C654 &&\
@@ -88,17 +88,21 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com \
         > /etc/apt/sources.list.d/ros-latest.list &&\
     apt-get update &&\
     apt-get install -y --no-install-recommends \
-        ros-${ROS_DISTRO}-desktop-full \
+        ros-${ROS_DISTRO}-ros-base \
+        ros-${ROS_DISTRO}-perception \
+        ros-${ROS_DISTRO}-geometry2 \
+        ros-${ROS_DISTRO}-vision-opencv \
 	ros-${ROS_DISTRO}-jsk-tools \
-        python-rosdep \
-        python-rosinstall \
-        python-rosinstall-generator \
-        python-vcstools \
-        python-wstool \
-        python-catkin-tools \
+        python3-rosdep \
+        python3-rosinstall \
+        python3-rosinstall-generator \
+        python3-vcstools \
+        python3-wstool \
+        python3-catkin-tools \
         python3-catkin-pkg-modules \
         python3-rospkg-modules \
         python3-empy \
+        libgtk-3-dev \
         &&\
     rm -rf /var/lib/apt/lists/* &&\
     rosdep init &&\
@@ -108,7 +112,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com \
 RUN apt-key adv --keyserver keyserver.ubuntu.com \
                 --recv-keys 6AF7F09730B3F0A4 &&\
                 apt-get update &&\
-                apt-get install ros-melodic-ros-numpy
+                apt-get install ros-${ROS_DISTRO}-ros-numpy
 
 # Set workspace directories
 # =========================
@@ -125,10 +129,6 @@ RUN groupadd -K GID_MIN=900 -K GID_MAX=1100 runtimeusers
 # ===========================================================
 RUN mkdir -p ${CATKIN_WS_DIR}/src && \
     cd ${CATKIN_WS_DIR} &&\
-    wstool init &&\
-    wstool set -y src/geometry2 --git https://github.com/ros/geometry2 -v 0.6.5 &&\
-    wstool set -y src/vision_opencv --git https://github.com/ros-perception/vision_opencv -v 1.13.0 &&\
-    wstool up &&\
     rosdep update && rosdep install --from-paths src --ignore-src -y -r &&\
     rm -rf /var/lib/apt/lists/* &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release && \
@@ -139,8 +139,7 @@ RUN mkdir -p ${CATKIN_WS_DIR}/src && \
 # Install 6DoFGraspNet and related dependencies
 # =============================================
 
-RUN pip3 install vtk==8.1.0 &&\
-    pip3 install tensorflow-gpu==1.13.1
+# RUN pip3 install vtk==8.1.0
 
 RUN mkdir -p ${WS_SOURCES} &&\
      cd ${WS_SOURCES} &&\
@@ -148,10 +147,20 @@ RUN mkdir -p ${WS_SOURCES} &&\
      apt-get install git-lfs
 
 RUN cd ${WS_SOURCES} &&\
-    git lfs clone https://github.com/hsp-panda/6dof-graspnet.git &&\
+    git lfs clone https://github.com/nicolas-schreiber/6dof-graspnet.git &&\
     git clone https://github.com/hsp-panda/pointnet2.git &&\
     cd 6dof-graspnet/ &&\
-    pip3 install --ignore-installed -r requirements.txt &&\
+    #pip3 install vtk==9.1.0 &&\
+    #pip3 install --ignore-installed -r requirements.txt &&\
+    pip install attrdict &&\
+    pip install mayavi \
+    trimesh \
+    pyrender \
+    easydict \
+    pyqt5 \
+    traitsui \
+    wxpython \
+    python-fcl &&\
     tar -xvzf checkpoints.tar.gz
 
 ###################################
@@ -162,9 +171,8 @@ ENV GRASPNET_DIR=${WS_SOURCES}/6dof-graspnet
 # # ==========================
 
 RUN cd ${CATKIN_WS_DIR}/src &&\
-    git clone https://github.com/hsp-panda/panda_ros_common &&\
-    git clone https://github.com/hsp-panda/grasping-benchmarks-panda.git &&\
-    pip3 install grasping-benchmarks-panda/ &&\
+    git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
+    pip install -e grasping-benchmarks-panda/ &&\
     cd ${CATKIN_WS_DIR} &&\
     rosdep update &&\
     catkin config --extend /opt/ros/${ROS_DISTRO} -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DGPD_ROS=OFF &&\
@@ -185,6 +193,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # Image initialization
 # ====================
 ENV USERNAME=docker
+
+# Grasp Planner Definition
+ENV GRASP_BENCHMARK_GRASPNET=true
 
 # Include a custom bashrc
 COPY bashrc /usr/etc/skel/bashrc-dev
