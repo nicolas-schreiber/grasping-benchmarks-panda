@@ -178,7 +178,6 @@ RUN mkdir -p ${CATKIN_WS_DIR}/src && \
 
 #RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-RUN echo "hiiiiiii"
 RUN cd ${CATKIN_WS_DIR}/src &&\
     git clone https://github.com/nicolas-schreiber/grasping-benchmarks-panda.git &&\
     pip3 install -e grasping-benchmarks-panda/ &&\

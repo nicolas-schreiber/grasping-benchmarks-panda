@@ -147,7 +147,6 @@ RUN mkdir -p ${WS_SOURCES} &&\
      apt-get install git-lfs
 
 RUN cd ${WS_SOURCES} &&\
-    echo "!!!!!" &&\
     git lfs clone https://github.com/nicolas-schreiber/6dof-graspnet.git &&\
     git clone https://github.com/hsp-panda/pointnet2.git &&\
     cd 6dof-graspnet/ &&\

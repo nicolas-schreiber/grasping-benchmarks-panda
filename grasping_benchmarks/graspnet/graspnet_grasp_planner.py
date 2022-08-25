@@ -244,22 +244,6 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
         intrinsic_matrix = np.array([[fx, skew,  cx],
                                      [0,    fy,  cy],
                                      [0,     0,   1]])
-
-        print({'fx' : fx,
-               'fy' : fy,
-               'cx' : cx,
-               'cy' : cy,
-               'skew' : skew,
-               'w' : w,
-               'h' : h,
-               'frame' : cam_intrinsic_frame,
-               'matrix' : intrinsic_matrix,
-               'position': cam_extrinsic_matrix[:3,3],
-               'rotation': cam_extrinsic_matrix[:3,:3],
-               'rgb_image': rgb_image.shape,
-               'depth_image': depth_image.shape,
-               'obj_cloud': obj_cloud == None})
-
         camera_data.intrinsic_params = {
                                         'fx' : fx,
                                         'fy' : fy,
