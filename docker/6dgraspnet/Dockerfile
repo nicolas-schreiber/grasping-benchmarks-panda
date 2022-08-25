@@ -160,7 +160,8 @@ RUN cd ${WS_SOURCES} &&\
     easydict \
     pyqt5 \
     traitsui \
-    wxpython &&\
+    wxpython \
+    python-fcl &&\
     tar -xvzf checkpoints.tar.gz
 
 ###################################
