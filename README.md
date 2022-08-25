@@ -1,5 +1,66 @@
 # grasping-benchmarks-panda
 
+
+## Modifications of this fork
+In this fork we focused on the grasp algorithm, removing the benchmark_ros_manager, allowing to create grasp requests from data not coming from ROS. Instead, the data could come, for instance, from Simulations, from different methods accessing the camera data, from preprocessed data, and so on.
+
+We therefore had following changes: 
+- removed the `benchmark_ros_manager.py`
+- fixed some issues we found with the Dockerfiles
+- added a segmentation mask to the Grasp Request, to allow for selecting the Object we want to grasp
+- moved some of the Docker containers to ROS Noetic
+- automatically start the chosen Grasp Service when starting a docker container
+- Reduced amount of samples used by graspnet_planner due to GPU constraints
+- Removed the tools in the docker folder (Might still be useful later on, but we wanted to keep things small)
+
+Here the shortest version of instructions on how to use this modified version of the repo:
+
+```bash
+# Install the recommended ROS Version for your OS
+
+# Create ~/catkin_ws/src
+mkdir -p ~/catkin_ws/src
+
+# Clone this Repo into the src folder
+cd ~/catkin_ws/src
+git clone git@github.com:nicolas-schreiber/grasping-benchmarks-panda.git
+
+# Build the Repo (just creates the representations of the GraspRequest ROS Message and the GraspService)
+# We prefer catkin build, but catkin_make should also work
+catkin build
+# or
+cd ~/catkin_ws
+catkin_make
+
+# Build the docker containers
+cd ~/catkin_ws/src/grasping-benchmarks-panda/docker
+make USER_NAME=<your username here> dexnet
+
+# Run the docker container
+cd ..
+bash run.sh nicolas_schreiber dexnet_container nicolas_schreiber/benchmark_dexnet
+
+# ========= Further useful commands =============== 
+# When running the docker container again you can simply call, this reuses the last docker container
+bash run.sh nicolas_schreiber dexnet_container
+
+# For any C++ or Python scripts to have access to the `BenchmarkGrasp.msg` the `GraspPlanner.srv` run following command:
+source ~/catkin_ws/devel/setup.bash
+
+# By calling this in a different terminal you can check what services are available:
+rosservice list
+```
+
+### TODOs
+- Some of the grasping algorithms still produce a visualization of the grasp they propose, which is great for debugging, but we want to allow disabling this feature for production use
+- We still need to unify the manner the Grasp Algorithms require the data received. The Interface to the outside should be identical between the algorithms. This is not yet the case, for instance, the GPD Algorithm requires the PointCloud to be relative to the global coordinate System, Graspnet, however, superquadrics seems to only work if the pointcloud data is provided relative to the camera coordinate system.
+- GraspNet does not yet fully work, still working on it
+- We later want to add more algorithms
+- Add a small demo python file to show how to interact with the Grasp Services based on example Data
+
+---
+# Original Readme starts here
+
 ## In a nutshell
 
 > _"Jeez, I wish I hadn't chosen to benchmark all these grasping algorithms"_ - probably you, right now
