@@ -29,6 +29,7 @@ import superquadric_bindings  as sb
 from grasping_benchmarks.base.base_grasp_planner import CameraData
 
 from grasping_benchmarks.superquadric_based.superquadrics_grasp_planner import SuperquadricsGraspPlanner
+from grasping_benchmarks.base.transformations import quaternion_to_matrix, matrix_to_quaternion
 
 
 class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
@@ -74,9 +75,13 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
                              req.view_point.pose.orientation.y,
                              req.view_point.pose.orientation.z,
                              req.view_point.pose.orientation.w])
+        camera_extrinsic_matrix = np.eye(4)
+        camera_extrinsic_matrix[:3,:3] = quaternion_to_matrix(cam_quat)
+        camera_extrinsic_matrix[:3,3] = cam_position
 
         # pointcloud2 to numpy array of shape (n_points, 3)
         points = self.npy_from_pc2(ros_cloud)[0]
+        points = self.transform_pc_to_camera_frame(points, camera_extrinsic_matrix) if points is not None else None
 
         camera_data = self.create_camera_data(points, cam_position, cam_quat)
 
@@ -185,6 +190,36 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
         valid_point_indexes = np.reshape(valid_point_indexes, valid_point_indexes.shape[0])
 
         return points_xyz[valid_point_indexes], points_rgb[valid_point_indexes]
+
+    def transform_pc_to_camera_frame(self, pc : np.ndarray, camera_pose : np.ndarray) -> np.ndarray:
+        """Transform the point cloud from root to camera reference frame
+
+        Parameters
+        ----------
+        pc : np.ndarray
+            nx3, float64 array of points
+        camera_pose : np.ndarray
+            4x4 camera pose, affine transformation
+
+        Returns
+        -------
+        np.ndarray
+            [description]
+        """
+
+        # [F]_p         : point p in reference frame F
+        # [F]_T_[f]     : frame f in reference frame F
+        # r             : root ref frame
+        # cam           : cam ref frame
+        # p, pc         : point, point cloud (points as rows)
+        # tr(r_pc) = r_T_cam * tr(cam_pc)
+        # tr(cam_pc) = inv(r_T_cam) * tr(r_pc)
+
+        r_pc = np.c_[pc, np.ones(pc.shape[0])]
+        cam_T_r = np.linalg.inv(camera_pose)
+        cam_pc = np.transpose(np.dot(cam_T_r, np.transpose(r_pc)))
+
+        return cam_pc[:, :-1]
 
 
 if __name__ == "__main__":

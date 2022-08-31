@@ -142,12 +142,10 @@ RUN mkdir -p ${CATKIN_WS_DIR}/src && \
 # RUN pip3 install vtk==8.1.0
 
 RUN mkdir -p ${WS_SOURCES} &&\
-     cd ${WS_SOURCES} &&\
-     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash &&\
-     apt-get install git-lfs
+     cd ${WS_SOURCES}
 
 RUN cd ${WS_SOURCES} &&\
-    git lfs clone https://github.com/nicolas-schreiber/6dof-graspnet.git &&\
+    git clone https://github.com/nicolas-schreiber/6dof-graspnet.git &&\
     git clone https://github.com/hsp-panda/pointnet2.git &&\
     cd 6dof-graspnet/ &&\
     #pip3 install vtk==9.1.0 &&\
