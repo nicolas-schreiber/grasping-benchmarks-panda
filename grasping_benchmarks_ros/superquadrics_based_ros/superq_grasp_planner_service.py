@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     # Instantiate the grasp planner.
     grasp_planner = SuperquadricGraspPlannerService(config_file,
-                                              grasp_service_name, grasp_publisher_name, grasp_offset)
+                                              grasp_service_name, grasp_publisher_name, grasp_offset, visualize_grasp=visualize_grasp)
 
     rospy.loginfo("Superquadric-based grasp detection server initialized, waiting for a point cloud ...")
 
