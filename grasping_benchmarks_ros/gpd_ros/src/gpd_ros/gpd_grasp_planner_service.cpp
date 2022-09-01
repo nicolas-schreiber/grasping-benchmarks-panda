@@ -132,9 +132,9 @@ int main(int argc, char** argv)
   node.param<bool>("visualize_grasp", visualize_grasp, false);
 
   if(visualize_grasp) {
-    system(std::string("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 1/' ") + config_file);
+    system((std::string("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 1/' ") + config_file).c_str());
   } else {
-    system(std::string("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 0/' ") + config_file);
+    system((std::string("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 0/' ") + config_file).c_str());
   }
 
   // Pose offset to be applied when converting from gpd to benchmark standard grasp message
