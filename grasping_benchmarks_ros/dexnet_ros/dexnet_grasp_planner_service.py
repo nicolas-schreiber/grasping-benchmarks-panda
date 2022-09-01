@@ -360,7 +360,7 @@ if __name__ == "__main__":
 
     # Instantiate the grasp planner.
     grasp_planner = DexnetGraspPlannerService(model_dir, fully_conv, grasp_offset, cv_bridge,
-                                              grasp_service_name, grasp_publisher_name)
+                                              grasp_service_name, grasp_publisher_name, visualize_grasp=visualize_grasp)
 
     rospy.loginfo("Grasping Policy Initialized")
 
