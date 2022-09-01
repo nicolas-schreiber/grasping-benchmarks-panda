@@ -271,7 +271,7 @@ class DexnetGraspPlanner(BaseGraspPlanner):
 
         return cam_T_grasp
 
-    def plan_grasp(self, camera_data, n_candidates=1):
+    def plan_grasp(self, camera_data, n_candidates=1, visualize_grasp=False):
         """Grasp planner.
 
         Parameters
@@ -358,7 +358,8 @@ class DexnetGraspPlanner(BaseGraspPlanner):
             self.grasp_poses = l
             self.best_grasp = l[0]
 
-            self.visualize()
+            if visualize_grasp:
+                self.visualize()
 
             return True
 

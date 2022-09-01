@@ -124,10 +124,18 @@ int main(int argc, char** argv)
   std::string grasp_service_name;
   std::string grasp_publisher_name;
   std::string config_file;
+  bool visualize_grasp;
   node.param<std::string>("grasp_planner_service_name", grasp_service_name, "gpd_grasp_planner_service");
   node.param<std::string>("grasp_publisher_name", grasp_publisher_name, "");
 
   node.getParam("config_file", config_file);
+  node.param<bool>("visualize_grasp", visualize_grasp, false);
+
+  if(visualize_grasp) {
+    system("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 1/' " + config_file)
+  } else {
+    system("sed -i 's/^plot_selected_grasps.*$/plot_selected_grasps = 0/' " + config_file)
+  }
 
   // Pose offset to be applied when converting from gpd to benchmark standard grasp message
   // In gpd reference frame

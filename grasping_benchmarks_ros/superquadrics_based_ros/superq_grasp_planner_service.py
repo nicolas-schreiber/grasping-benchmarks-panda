@@ -33,7 +33,7 @@ from grasping_benchmarks.base.transformations import quaternion_to_matrix, matri
 
 
 class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
-    def __init__(self, cfg_file, grasp_service_name, grasp_publisher_name, grasp_offset):
+    def __init__(self, cfg_file, grasp_service_name, grasp_publisher_name, grasp_offset, visualize_grasp=False):
         """
         Parameters
         ----------
@@ -56,6 +56,8 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
                                             self.plan_grasp_handler)
 
         self._visualizer = []
+
+        self.visualize_grasp = visualize_grasp
 
 
     def read_images(self, req):
@@ -98,7 +100,7 @@ class SuperquadricGraspPlannerService(SuperquadricsGraspPlanner):
         camera_data = self.read_images(req)
 
         self.grasp_poses = []
-        ok = self.plan_grasp(camera_data, n_candidates=1)
+        ok = self.plan_grasp(camera_data, n_candidates=1, visualize_grasp=self.visualize_grasp)
 
         if ok:
             return self._create_grasp_planner_srv_msg()
@@ -234,6 +236,8 @@ if __name__ == "__main__":
     grasp_offset = rospy.get_param("~grasp_pose_offset", [0.0, 0.0, 0.0])
 
     grasp_offset = np.array(grasp_offset[:3])
+
+    visualize_grasp = rospy.get_param("~visualize_grasp", False)
 
     # Instantiate the grasp planner.
     grasp_planner = SuperquadricGraspPlannerService(config_file,

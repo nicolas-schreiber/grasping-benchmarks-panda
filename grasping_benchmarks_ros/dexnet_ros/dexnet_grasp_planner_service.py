@@ -40,7 +40,7 @@ DEBUG = True
 
 
 class DexnetGraspPlannerService(DexnetGraspPlanner):
-    def __init__(self, model_file, fully_conv, grasp_offset, cv_bridge, grasp_service_name, grasp_publisher_name):
+    def __init__(self, model_file, fully_conv, grasp_offset, cv_bridge, grasp_service_name, grasp_publisher_name, visualize_grasp=False):
         """
         Parameters
         ----------
@@ -67,6 +67,7 @@ class DexnetGraspPlannerService(DexnetGraspPlanner):
         self._grasp_planning_service = rospy.Service(grasp_service_name, GraspPlanner,
                                             self.plan_grasp_handler)
 
+        self.visualize_grasp = visualize_grasp
 
 
     def read_images(self, req):
@@ -160,7 +161,7 @@ class DexnetGraspPlannerService(DexnetGraspPlanner):
         n_of_candidates = req.n_of_candidates if req.n_of_candidates else 1
 
         self.grasp_poses = []
-        ok = self.plan_grasp(camera_data, n_candidates=n_of_candidates)
+        ok = self.plan_grasp(camera_data, n_candidates=n_of_candidates, visualize_grasp=self.visualize_grasp)
 
         if ok:
             self.camera_viewpoint = req.view_point
@@ -347,6 +348,7 @@ if __name__ == "__main__":
     grasp_service_name = rospy.get_param("~grasp_planner_service_name")
     grasp_publisher_name = rospy.get_param("~grasp_publisher_name")
     grasp_offset = rospy.get_param("~grasp_pose_offset", [0.0, 0.0, 0.0])
+    visualize_grasp = rospy.get_param("~visualize_grasp", False)
 
     grasp_offset = np.array(grasp_offset[:3])
 

@@ -21,6 +21,7 @@ XSOCK="/tmp/.X11-unix"
 XAUTH="/tmp/.$CONTAINERNAME.xauth"
 USER_UID=$UID
 USER_GID=$UID
+VISUALIZE_GRASP=${VISUALIZE_GRASP}
 
 # ====================================
 # With two arguments, the user wants an already existing container.
@@ -82,6 +83,7 @@ then
         -e USER_GID=$USER_GID \
         -e USERNAME=$USERNAME \
         -e XAUTHORITY=$XAUTH \
+        -e VISUALIZE_GRASP=$VISUALIZE_GRASP \
         --volume=$XSOCK:$XSOCK:rw \
         --volume=$XAUTH:$XAUTH:rw \
         --device /dev/dri \
@@ -90,8 +92,8 @@ then
         --network=host \
         --privileged \
         $IMAGENAME \
-        bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
+        bash -i # -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 else
     docker start $CONTAINERNAME > /dev/null
-    docker exec -it -u $USERNAME $CONTAINERNAME bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
+    docker exec -it -e VISUALIZE_GRASP=$VISUALIZE_GRASP -u $USERNAME $CONTAINERNAME bash -i #-c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 fi

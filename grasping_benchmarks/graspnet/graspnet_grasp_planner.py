@@ -298,7 +298,7 @@ class GraspNetGraspPlanner(BaseGraspPlanner):
         return aruco_board_data    
 
 
-    def plan_grasp(self, camera_data : CameraData,aruco_board_data : ArucoBoardData, n_candidates : int) -> bool:
+    def plan_grasp(self, camera_data : CameraData,aruco_board_data : ArucoBoardData, n_candidates : int, visualize_grasp: bool = False) -> bool:
         """Plan grasps according to visual data. Grasps are returned with
         respect to the camera reference frame
 

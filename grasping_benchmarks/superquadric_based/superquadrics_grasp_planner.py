@@ -164,7 +164,7 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
 
         return self._camera_data
 
-    def plan_grasp(self, camera_data, n_candidates=1):
+    def plan_grasp(self, camera_data, n_candidates=1, visualize_grasp=False):
         """Grasp Planner
             Compute candidate 6D grasp poses
 
@@ -190,8 +190,8 @@ class SuperquadricsGraspPlanner(BaseGraspPlanner):
             warnings.warn("Cannot compute a valid grasp pose from the given data")
             return False
 
-
-        self.visualize()
+        if visualize_grasp:
+            self.visualize()
 
         return True
 

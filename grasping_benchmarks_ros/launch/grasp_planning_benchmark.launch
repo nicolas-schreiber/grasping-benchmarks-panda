@@ -15,13 +15,13 @@
 
     <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.005]" />
 
-
     <node name="dexnet_grasp_planner"  pkg="grasping_benchmarks_ros" type="dexnet_grasp_planner_service.py" ns="$(arg ns)" output="screen" >
     	<param name="model_name"                          value="$(arg model_name)" />
     	<param name="model_dir"                           value="$(arg model_dir)" />
     	<param name="fully_conv"                          value="$(arg fully_conv)" />
       <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
       <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
+      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
       <rosparam param="grasp_pose_offset"               subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
@@ -45,6 +45,7 @@
       <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
       <param name="config_file"                         value="$(arg config_file)" />
       <param name="publish_rviz"                        value="$(arg publish_rviz)" />
+      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
@@ -67,6 +68,7 @@
       <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
       <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
       <param name="config_file"                         value="$(arg config_file)" />
+      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
@@ -91,6 +93,7 @@
       <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
       <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
       <param name="config_file"                         value="$(arg config_file)" />
+      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
       <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 

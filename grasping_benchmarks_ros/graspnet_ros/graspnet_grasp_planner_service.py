@@ -360,6 +360,7 @@ if __name__ == "__main__":
     grasp_publisher_name = rospy.get_param("~grasp_publisher_name")
     grasp_offset = rospy.get_param("~grasp_pose_offset", [0.0, 0.0, 0.0])
     grasp_offset = np.array(grasp_offset[:3])
+    visualize_grasp = rospy.get_param("~visualize_grasp", False)
 
     # Initialize the grasp planner service
     grasp_planner = GraspnetGraspPlannerService(cfg_file=cfg_file,
@@ -372,7 +373,7 @@ if __name__ == "__main__":
 
     # Visualization needs to be called from the main thread with mayavi
     while(not rospy.is_shutdown()):
-        if visualization_mutex.isReady:
+        if visualization_mutex.isReady and visualize_grasp:
             visualization_mutex.setReadyState(False)
             grasp_planner.visualize(visualize_all=False)
         rospy.sleep(1)
