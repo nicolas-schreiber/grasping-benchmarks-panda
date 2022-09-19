@@ -88,12 +88,13 @@ then
         --volume=$XAUTH:$XAUTH:rw \
         --device /dev/dri \
         --gpus=all \
+        --restart always \
         --volume=$HOME/workspace/docker-shared-workspace/$CONTAINERNAME:/home/$USERNAME/workspace-shared \
         --network=host \
         --privileged \
         $IMAGENAME \
-        bash -i # -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
+        bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 else
     docker start $CONTAINERNAME > /dev/null
-    docker exec -it -e VISUALIZE_GRASP=$VISUALIZE_GRASP -u $USERNAME $CONTAINERNAME bash -i #-c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
+    docker exec -it -e VISUALIZE_GRASP=$VISUALIZE_GRASP --restart always -u $USERNAME $CONTAINERNAME bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 fi
