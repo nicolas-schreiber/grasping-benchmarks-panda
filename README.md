@@ -52,11 +52,11 @@ rosservice list
 ```
 
 ### TODOs
-- Some of the grasping algorithms still produce a visualization of the grasp they propose, which is great for debugging, but we want to allow disabling this feature for production use
-- We still need to unify the manner the Grasp Algorithms require the data received. The Interface to the outside should be identical between the algorithms. This is not yet the case, for instance, the GPD Algorithm requires the PointCloud to be relative to the global coordinate System, Graspnet, however, superquadrics seems to only work if the pointcloud data is provided relative to the camera coordinate system.
-- GraspNet does not yet fully work, still working on it
+- ~~Some of the grasping algorithms still produce a visualization of the grasp they propose, which is great for debugging, but we want to allow disabling this feature for production use~~
+- ~~We still need to unify the manner the Grasp Algorithms require the data received. The Interface to the outside should be identical between the algorithms. This is not yet the case, for instance, the GPD Algorithm requires the PointCloud to be relative to the global coordinate System, Graspnet, however, superquadrics seems to only work if the pointcloud data is provided relative to the camera coordinate system.~~
+- ~~GraspNet does not yet fully work, still working on it~~
 - We later want to add more algorithms
-- Add a small demo python file to show how to interact with the Grasp Services based on example Data
+- ~~Add a small demo python file to show how to interact with the Grasp Services based on example Data~~
 
 ---
 # Original Readme starts here
