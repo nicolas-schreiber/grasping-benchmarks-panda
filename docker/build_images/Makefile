@@ -29,3 +29,10 @@ superquadrics:
 		--build-arg from=nvcr.io/nvidia/tensorflow:22.07-tf1-py3 \
 		--tag $(USER_NAME)/benchmark_6dgraspnet:latest \
 		../6dgraspnet/
+
+
+contactgraspnet:
+	docker build --rm \
+		--build-arg from=tensorflow/tensorflow:2.2.3-gpu-py3 \
+		--tag $(USER_NAME)/benchmark_contactgraspnet:latest \
+		../contact_graspnet/
