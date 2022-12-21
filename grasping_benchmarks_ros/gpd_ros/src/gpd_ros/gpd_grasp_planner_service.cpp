@@ -77,39 +77,38 @@ bool GpdGraspPlannerService::planGrasps(grasping_benchmarks_ros::GraspPlanner::R
   // The list is already ordered by grasp quality
   std::vector<std::unique_ptr<gpd::candidate::Hand>> grasps = grasp_detector_->detectGrasps(*cloud_camera_);
 
-  if (grasps.size() >= req.n_of_candidates)
+  if (grasps.size() <= req.n_of_candidates)
   {
-    // Visualize the detected grasps in rviz.
-    if (use_rviz_)
-    {
-      rviz_plotter_->drawGrasps(grasps, frame_);
-    }
-
-    cloud_camera_header_.frame_id = cloud_ros.header.frame_id;
-
-    // 4. Create benchmark grasp reply.
-    grasping_benchmarks_ros::BenchmarkGrasp best_grasp = GraspMessages::convertToBenchmarkGraspMsg(*grasps[0], cloud_camera_header_, grasp_pose_offset_);
-    for (size_t grasp_idx = 0; grasp_idx < req.n_of_candidates; ++grasp_idx)
-    {
-      auto& grasp_candidate = grasps[grasp_idx];
-      grasping_benchmarks_ros::BenchmarkGrasp bench_grasp = GraspMessages::convertToBenchmarkGraspMsg(*grasp_candidate, cloud_camera_header_, grasp_pose_offset_);
-      res.grasp_candidates.push_back(bench_grasp);
-      if (bench_grasp.score.data > best_grasp.score.data)
-      {
-        best_grasp = bench_grasp;
-      }
-    }
-
-    // Publish the best grasp on topic
-
-    grasps_pub_.publish(best_grasp.pose);
-
-    ROS_INFO_STREAM("Detected grasp.");
-    return true;
+    ROS_WARN("Not enough grasp candidates detected!");
   }
 
-  ROS_WARN("Not enough grasp candidates detected!");
-  return false;
+  // Visualize the detected grasps in rviz.
+  if (use_rviz_)
+  {
+    rviz_plotter_->drawGrasps(grasps, frame_);
+  }
+
+  cloud_camera_header_.frame_id = cloud_ros.header.frame_id;
+
+  // 4. Create benchmark grasp reply.
+  grasping_benchmarks_ros::BenchmarkGrasp best_grasp = GraspMessages::convertToBenchmarkGraspMsg(*grasps[0], cloud_camera_header_, grasp_pose_offset_);
+  for (size_t grasp_idx = 0; grasp_idx < req.n_of_candidates; ++grasp_idx)
+  {
+    auto& grasp_candidate = grasps[grasp_idx];
+    grasping_benchmarks_ros::BenchmarkGrasp bench_grasp = GraspMessages::convertToBenchmarkGraspMsg(*grasp_candidate, cloud_camera_header_, grasp_pose_offset_);
+    res.grasp_candidates.push_back(bench_grasp);
+    if (bench_grasp.score.data > best_grasp.score.data)
+    {
+      best_grasp = bench_grasp;
+    }
+  }
+
+  // Publish the best grasp on topic
+
+  grasps_pub_.publish(best_grasp.pose);
+
+  ROS_INFO_STREAM("Detected grasp.");
+  return true;
 }
 
 int main(int argc, char** argv)
