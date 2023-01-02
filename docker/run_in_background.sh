@@ -75,7 +75,7 @@ if [ "$NEW_CONTAINER" == 'true' ]
 then
     mkdir -p $HOME/workspace/docker-shared-workspace/$CONTAINERNAME
     docker run \
-        -it \
+        -d \
         --name=$CONTAINERNAME \
         -e DISPLAY=$DISPLAY \
         -e QT_X11_NO_MITSHM=1 \
@@ -97,5 +97,5 @@ then
         bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 else
     docker start $CONTAINERNAME > /dev/null
-    docker exec -it -e VISUALIZE_GRASP=$VISUALIZE_GRASP -e TF_ALLOW_IOLIBS=1 --restart on-failure -u $USERNAME $CONTAINERNAME bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
+    docker exec -d -e VISUALIZE_GRASP=$VISUALIZE_GRASP -e TF_ALLOW_IOLIBS=1 --restart on-failure -u $USERNAME $CONTAINERNAME bash -i -c "roslaunch grasping_benchmarks_ros grasp_planning_benchmark.launch"
 fi

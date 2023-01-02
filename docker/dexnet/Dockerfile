@@ -144,6 +144,7 @@ RUN apt-get update && \
     autolab-perception==1.0.0 \
     autolab-core \
     visualization \
+    gdown \
     &&\
     rm -rf /var/lib/apt/lists/*
 
@@ -152,9 +153,11 @@ RUN apt-get update && \
 # ==============
 RUN cd ${WS_SOURCES} &&\
     git clone https://github.com/BerkeleyAutomation/gqcnn.git &&\
+    gdown "https://drive.google.com/u/0/uc?id=1fbC0sGtVEUmAy7WPT_J-50IuIInMR9oO&export=download" -O /tmp/model_zoo.zip &&\
     cd gqcnn/ &&\
-    chmod +x scripts/downloads/models/download_models.sh &&\
-    ./scripts/downloads/models/download_models.sh &&\
+    unzip -j /tmp/model_zoo.zip model_zoo/FC-GQCNN-4.0-PJ.zip -d /tmp &&\
+    unzip /tmp/FC-GQCNN-4.0-PJ.zip -d scripts/downloads/models/ &&\
+    rm -rf /tmp/model_zoo.zip /tmp/FC-GQCNN-4.0-PJ.zip &&\
     pip3 install .  &&\
     find ${WS_SOURCES} -not -group runtimeusers -exec chgrp runtimeusers {} \; -exec chmod g+rw {} \+
 
