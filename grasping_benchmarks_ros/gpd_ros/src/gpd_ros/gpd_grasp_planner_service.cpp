@@ -82,6 +82,12 @@ bool GpdGraspPlannerService::planGrasps(grasping_benchmarks_ros::GraspPlanner::R
     ROS_WARN("Not enough grasp candidates detected!");
   }
 
+  if (grasps.size() == 0)
+  {
+    ROS_WARN("No grasp candidates detected!");
+    return false;
+  }
+
   // Visualize the detected grasps in rviz.
   if (use_rviz_)
   {
