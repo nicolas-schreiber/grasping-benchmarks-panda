@@ -3,26 +3,26 @@
   <!-- Run Dexnet Grasp Planner -->
   <group if="$(optenv GRASP_BENCHMARK_DEXNET false)">
 
-    <arg name="ns"  default="dexnet_bench" />
-    <arg name="grasp_planner_service_name"        default="dexnet_grasp_planner_service" />
-    <arg name="grasp_planner_service"             default="GraspPlanner" />
-    <arg name="grasp_publisher_name"              default="candidate_grasp" />
+    <arg name="ns" default="dexnet_bench" />
+    <arg name="grasp_planner_service_name" default="dexnet_grasp_planner_service" />
+    <arg name="grasp_planner_service" default="GraspPlanner" />
+    <arg name="grasp_publisher_name" default="candidate_grasp" />
 
-    <arg name="model_dir"                         default="/workspace/sources/gqcnn/models" />
-    <arg name="fully_conv"                        default="false" />
-    <arg name="model_name"                        default="FC-GQCNN-4.0-PJ" if="$(eval fully_conv == true)" />
-    <arg name="model_name"                        default="GQCNN-4.0-PJ" if="$(eval fully_conv == false)" />
+    <arg name="model_dir" default="/workspace/sources/gqcnn/models" />
+    <arg name="fully_conv" default="false" />
+    <arg name="model_name" default="FC-GQCNN-4.0-PJ" if="$(eval fully_conv == true)" />
+    <arg name="model_name" default="GQCNN-4.0-PJ" if="$(eval fully_conv == false)" />
 
-    <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.005]" />
+    <arg name="grasp_pose_offset" default="[0.0, 0.0, 0.005]" />
 
-    <node name="dexnet_grasp_planner"  pkg="grasping_benchmarks_ros" type="dexnet_grasp_planner_service.py" ns="$(arg ns)" output="screen" >
-    	<param name="model_name"                          value="$(arg model_name)" />
-    	<param name="model_dir"                           value="$(arg model_dir)" />
-    	<param name="fully_conv"                          value="$(arg fully_conv)" />
-      <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
-      <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
-      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
-      <rosparam param="grasp_pose_offset"               subst_value="True">$(arg grasp_pose_offset)</rosparam>
+    <node name="dexnet_grasp_planner" pkg="grasping_benchmarks_ros" type="dexnet_grasp_planner_service.py" ns="$(arg ns)" output="screen">
+      <param name="model_name" value="$(arg model_name)" />
+      <param name="model_dir" value="$(arg model_dir)" />
+      <param name="fully_conv" value="$(arg fully_conv)" />
+      <param name="grasp_planner_service_name" value="$(arg grasp_planner_service_name)" />
+      <param name="grasp_publisher_name" value="$(arg grasp_publisher_name)" />
+      <param name="visualize_grasp" value="$(optenv VISUALIZE_GRASP false)" />
+      <rosparam param="grasp_pose_offset" subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
   </group>
@@ -30,23 +30,23 @@
   <!-- Run GPD Grasp Planner -->
   <group if="$(optenv GRASP_BENCHMARK_GPD false)">
 
-    <arg name="ns"  default="gpd_bench" />
+    <arg name="ns" default="gpd_bench" />
     <arg name="grasp_planner_node_name" default="gpd_grasp_planner" />
 
-    <arg name="grasp_planner_service_name"        default="gpd_grasp_planner_service" />
-    <arg name="grasp_planner_service"             default="GraspPlannerCloud" />
-    <arg name="grasp_publisher_name"              default="candidate_grasp" />
-    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/gpd_ros/cfg/ros_caffe_params.cfg" />
-    <arg name="publish_rviz"                      default="true" />
-    <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.05]" />
+    <arg name="grasp_planner_service_name" default="gpd_grasp_planner_service" />
+    <arg name="grasp_planner_service" default="GraspPlannerCloud" />
+    <arg name="grasp_publisher_name" default="candidate_grasp" />
+    <arg name="config_file" default="$(find grasping_benchmarks_ros)/gpd_ros/cfg/ros_caffe_params.cfg" />
+    <arg name="publish_rviz" default="true" />
+    <arg name="grasp_pose_offset" default="[0.0, 0.0, 0.05]" />
 
-    <node name="$(arg grasp_planner_node_name)"  pkg="grasping_benchmarks_ros"  type="gpd_grasp_planner_service" ns="$(arg ns)" output="screen" >
-      <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
-      <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
-      <param name="config_file"                         value="$(arg config_file)" />
-      <param name="publish_rviz"                        value="$(arg publish_rviz)" />
-      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
-      <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
+    <node name="$(arg grasp_planner_node_name)" pkg="grasping_benchmarks_ros" type="gpd_grasp_planner_service" ns="$(arg ns)" output="screen">
+      <param name="grasp_planner_service_name" value="$(arg grasp_planner_service_name)" />
+      <param name="grasp_publisher_name" value="$(arg grasp_publisher_name)" />
+      <param name="config_file" value="$(arg config_file)" />
+      <param name="publish_rviz" value="$(arg publish_rviz)" />
+      <param name="visualize_grasp" value="$(optenv VISUALIZE_GRASP false)" />
+      <rosparam param="grasp_pose_offset" subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
   </group>
@@ -54,47 +54,47 @@
   <!-- Run Superquadrics-based Grasp Planner -->
   <group if="$(optenv GRASP_BENCHMARK_SUPERQUADRICS false)">
 
-    <arg name="ns"                        default="superquadric_bench" />
-    <arg name="grasp_planner_node_name"   default="superq_grasp_planner" />
+    <arg name="ns" default="superquadric_bench" />
+    <arg name="grasp_planner_node_name" default="superq_grasp_planner" />
 
-    <arg name="grasp_planner_service_name"        default="superq_grasp_planner_service" />
-    <arg name="grasp_planner_service"             default="GraspPlannerCloud" />
-    <arg name="grasp_publisher_name"              default="candidate_grasp" />
-    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/superquadrics_based_ros/cfg/config_panda.yaml" />
+    <arg name="grasp_planner_service_name" default="superq_grasp_planner_service" />
+    <arg name="grasp_planner_service" default="GraspPlannerCloud" />
+    <arg name="grasp_publisher_name" default="candidate_grasp" />
+    <arg name="config_file" default="$(find grasping_benchmarks_ros)/superquadrics_based_ros/cfg/config_panda.yaml" />
 
-    <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.0]" />
+    <arg name="grasp_pose_offset" default="[0.0, 0.0, 0.0]" />
 
-    <node name="$(arg grasp_planner_node_name)"  pkg="grasping_benchmarks_ros"  type="superq_grasp_planner_service.py" ns="$(arg ns)" output="screen" >
-      <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
-      <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
-      <param name="config_file"                         value="$(arg config_file)" />
-      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
-      <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
+    <node name="$(arg grasp_planner_node_name)" pkg="grasping_benchmarks_ros" type="superq_grasp_planner_service.py" ns="$(arg ns)" output="screen">
+      <param name="grasp_planner_service_name" value="$(arg grasp_planner_service_name)" />
+      <param name="grasp_publisher_name" value="$(arg grasp_publisher_name)" />
+      <param name="config_file" value="$(arg config_file)" />
+      <param name="visualize_grasp" value="$(optenv VISUALIZE_GRASP false)" />
+      <rosparam param="grasp_pose_offset" subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
   </group>
 
   <!-- Run GraspNet Grasp Planner -->
-  <group if="$(optenv GRASP_BENCHMARK_GRASPNET false)" >
+  <group if="$(optenv GRASP_BENCHMARK_GRASPNET false)">
 
     <!-- Planner params -->
-    <arg name="ns"                          default="graspnet_bench" />
-    <arg name="grasp_planner_node_name"     default="graspnet_grasp_planner" />
-    <arg name="grasp_planner_service_name"        default="graspnet_grasp_planner_service" />
-    <arg name="grasp_publisher_name"              default="candidate_grasp" />
-    <arg name="config_file"                       default="$(find grasping_benchmarks_ros)/graspnet_ros/cfg/cfg_graspnet.yaml" />
-    <arg name="grasp_pose_offset"                 default="[0.0, 0.0, 0.11]" />
-    <arg name="grasp_planner_service"             default="GraspPlannerCloud" />
+    <arg name="ns" default="graspnet_bench" />
+    <arg name="grasp_planner_node_name" default="graspnet_grasp_planner" />
+    <arg name="grasp_planner_service_name" default="graspnet_grasp_planner_service" />
+    <arg name="grasp_publisher_name" default="candidate_grasp" />
+    <arg name="config_file" default="$(find grasping_benchmarks_ros)/graspnet_ros/cfg/cfg_graspnet.yaml" />
+    <arg name="grasp_pose_offset" default="[0.0, 0.0, 0.11]" />
+    <arg name="grasp_planner_service" default="GraspPlannerCloud" />
     <!-- this last one is unused, left for legacy will have to be removed -->
 
     <!-- Launch planner -->
     <node name="graspnet_grasp_planner" pkg="grasping_benchmarks_ros" type="graspnet_grasp_planner_service.py" ns="$(arg ns)" output="screen">
-      <param name="grasp_planner_node_name"             value="$(arg grasp_planner_node_name)" />
-      <param name="grasp_planner_service_name"          value="$(arg grasp_planner_service_name)" />
-      <param name="grasp_publisher_name"                value="$(arg grasp_publisher_name)" />
-      <param name="config_file"                         value="$(arg config_file)" />
-      <param name="visualize_grasp"                     value="$(optenv VISUALIZE_GRASP false)" />
-      <rosparam param="grasp_pose_offset"             subst_value="True">$(arg grasp_pose_offset)</rosparam>
+      <param name="grasp_planner_node_name" value="$(arg grasp_planner_node_name)" />
+      <param name="grasp_planner_service_name" value="$(arg grasp_planner_service_name)" />
+      <param name="grasp_publisher_name" value="$(arg grasp_publisher_name)" />
+      <param name="config_file" value="$(arg config_file)" />
+      <param name="visualize_grasp" value="$(optenv VISUALIZE_GRASP false)" />
+      <rosparam param="grasp_pose_offset" subst_value="True">$(arg grasp_pose_offset)</rosparam>
     </node>
 
   </group>
