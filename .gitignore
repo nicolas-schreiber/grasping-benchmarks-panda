@@ -25,3 +25,5 @@ bin/
 *.tlog
 build
 node_modules
+
+grasping_benchmarks_ros/grconvnet_ros/debug_information/*
