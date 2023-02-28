@@ -44,3 +44,4 @@ img2world_converter:
     class: "grconvnet.postprocessing.GraspHeightAdjuster"
     min_height: 0.001
     target_grasp_depth: 0.03
+  max_gripper_width: 0.08
