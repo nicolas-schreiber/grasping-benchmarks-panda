@@ -137,6 +137,7 @@ class GRConvNetGraspPlannerService:
             cam_rot=sample.cam_rot,
             cam_pos=sample.cam_pos,
         )
+        plt.close(fig)
 
         self._exporter(
             {
