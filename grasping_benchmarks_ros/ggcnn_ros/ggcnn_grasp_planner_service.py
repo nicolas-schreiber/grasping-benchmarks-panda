@@ -1,11 +1,13 @@
+#!/usr/bin/env python3
+
 
 import yaml
 
 import ros_numpy
 import numpy as np
+import math
 
 import rospy
-from grasping_benchmarks.base.transformations import matrix_to_quaternion
 
 from grasping_benchmarks_ros.srv import (
     GraspPlanner,
@@ -22,8 +24,7 @@ from ggcnn_grasp_planner_pckg.ggcnn_grasp_planner import ggcnn_get_grasp
 class GGCNNGraspPlannerService():
     def __init__(
         self,
-        config_file: str,
-        service_name: str,
+        service_name: str
     ):
     # Initialize the ROS service 
     # ('service_name' -> ,
@@ -32,6 +33,37 @@ class GGCNNGraspPlannerService():
         self._service = rospy.Service(
             service_name, GraspPlanner, self.srv_handler
         )
+
+    def matrix_to_quaternion(self, matrix):
+        #Transform rotation from 3x3 matrix to quaternion representation matrix: 3x3
+        q = np.empty((4, ), dtype=np.float64)
+        M = np.identity(4)
+        M[:3, :3] = np.array(matrix, dtype=np.float64, copy=False)[:3, :3]
+        t = np.trace(M)
+        if t > M[3, 3]:
+            q[3] = t
+            q[2] = M[1, 0] - M[0, 1]
+            q[1] = M[0, 2] - M[2, 0]
+            q[0] = M[2, 1] - M[1, 2]
+        else:
+            i, j, k = 0, 1, 2
+
+            if M[1, 1] > M[0, 0]:
+                i, j, k = 1, 2, 0
+
+            if M[2, 2] > M[i, i]:
+                i, j, k = 2, 0, 1
+
+            t = M[i, i] - (M[j, j] + M[k, k]) + M[3, 3]
+
+            q[i] = t
+            q[j] = M[i, j] + M[j, i]
+            q[k] = M[k, i] + M[i, k]
+            q[3] = M[k, j] - M[j, k]
+
+        q *= 0.5 / math.sqrt(t * M[3, 3])
+        return q
+
 
     def srv_handler(self, request: GraspPlannerRequest) -> GraspPlannerResponse:
         
@@ -45,7 +77,7 @@ class GGCNNGraspPlannerService():
         cam_intrinsics = camera_matrix,
         cam_pos = camera_trafo_h[:3, 3],
         cam_rot = camera_trafo_h[:3, :3],
-        cam_quat = matrix_to_quaternion(cam_rot)
+        cam_quat = self.matrix_to_quaternion(cam_rot)
         
         # insert ggcnn_grasp_planner here
         grasps6D = ggcnn_get_grasp(depth_img, cam_intrinsics, cam_pos, cam_quat, n_candidates)
@@ -66,11 +98,11 @@ class GGCNNGraspPlannerService():
             pose.pose.position.y = g.position[1]
             pose.pose.position.z = g.position[2]
 
-            quat = g.orientation
-            pose.pose.orientation.x = self.quaternion[0]
-            pose.pose.orientation.y = self.quaternion[1]
-            pose.pose.orientation.z = self.quaternion[2]
-            pose.pose.orientation.w = self.quaternion[3]
+            #quat = g.orientation
+            pose.pose.orientation.x = g.orientation[0]
+            pose.pose.orientation.y = g.orientation[1]
+            pose.pose.orientation.z = g.orientation[2]
+            pose.pose.orientation.w = g.orientation[3]
             
             grasp_msg.pose = pose
 
