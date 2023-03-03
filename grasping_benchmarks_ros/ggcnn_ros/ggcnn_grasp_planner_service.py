@@ -56,9 +56,9 @@ class GGCNNGraspPlannerService():
 
             t = M[i, i] - (M[j, j] + M[k, k]) + M[3, 3]
 
-            q[i] = t
+            q[i] = M[k, i] + M[i, k]
             q[j] = M[i, j] + M[j, i]
-            q[k] = M[k, i] + M[i, k]
+            q[k] = t
             q[3] = M[k, j] - M[j, k]
 
         q *= 0.5 / math.sqrt(t * M[3, 3])
@@ -67,20 +67,29 @@ class GGCNNGraspPlannerService():
 
     def srv_handler(self, request: GraspPlannerRequest) -> GraspPlannerResponse:
         
+        
         depth_img = ros_numpy.numpify(request.depth_image)
+        depth_img = depth_img/1000
+
+        seg_img = ros_numpy.numpify(request.seg_image)
 
         camera_matrix = np.array(request.camera_info.K).reshape(3, 3)
+
+
         camera_trafo_h = ros_numpy.numpify(request.view_point.pose) # 4x4 homogenous tranformation matrix
-        
+
         n_candidates = request.n_of_candidates
 
-        cam_intrinsics = camera_matrix,
-        cam_pos = camera_trafo_h[:3, 3],
-        cam_rot = camera_trafo_h[:3, :3],
+        cam_intrinsics = camera_matrix
+        cam_pos = camera_trafo_h[:3, 3]
+        cam_rot = camera_trafo_h[:3, :3]
         cam_quat = self.matrix_to_quaternion(cam_rot)
+        #hotfix cam_quat
         
         # insert ggcnn_grasp_planner here
-        grasps6D = ggcnn_get_grasp(depth_img, cam_intrinsics, cam_pos, cam_quat, n_candidates)
+        print("CAM Intrinsics MATRIX that is passed on to grasp planner")
+        print(cam_intrinsics)
+        grasps6D = ggcnn_get_grasp(depth_img, cam_intrinsics, cam_pos, cam_quat, n_candidates, seg_img = seg_img)
 
         # create the response message
         # response = <service_name>Response 
@@ -106,8 +115,8 @@ class GGCNNGraspPlannerService():
             
             grasp_msg.pose = pose
 
-            grasp_msg.score.data = g.quality
-            grasp_msg.width.data = g.width
+            #grasp_msg.score.data = g.quality
+            #grasp_msg.width.data = g.width
 
             response.grasp_candidates.append(grasp_msg)
 
