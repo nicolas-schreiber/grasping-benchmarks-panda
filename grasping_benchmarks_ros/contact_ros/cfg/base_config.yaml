@@ -1,0 +1,29 @@
+model:
+  class: "contact_graspnet.models.ContactGraspnet"
+  config_path: "~/Documents/ContactGraspnetBenchmark/contact_graspnet/checkpoints/scene_test_2048_bs3_hor_sigma_001/config.yaml"
+  checkpoint_dir: "~/Documents/ContactGraspnetBenchmark/contact_graspnet/checkpoints/scene_test_2048_bs3_hor_sigma_001"
+
+preprocessor:
+  class: "contact_graspnet.preprocessing.UniversalPreprocessor"
+  depth2points_converter:
+    class: "contact_graspnet.preprocessing.Depth2ImgPoints"
+  img2cam_converter:
+    class: "contact_graspnet.preprocessing.Img2CamCoords"
+  z_clipper:
+    class: "contact_graspnet.preprocessing.ZClipper"
+    z_range: [0.2, 1.8]
+  segmentation_binarizer:
+    null
+    # class: "contact_graspnet.preprocessing.SegmentationBinarizer"
+    # segmentation_id: 1.0
+  resizer:
+    null
+    # class: "contact_graspnet.preprocessing.Resizer"
+    # target_size: [720, 1280]
+
+postprocessor:
+  class: "contact_graspnet.postprocessing.Postprocessor"
+  top_score_filter:
+    null
+    # class: "contact_graspnet.postprocessing.TopSoreFilter"
+    # top_k: 3
