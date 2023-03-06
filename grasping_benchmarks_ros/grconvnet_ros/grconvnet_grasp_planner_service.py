@@ -7,6 +7,9 @@ import time
 from typing import List
 
 import yaml
+import matplotlib as mpl
+
+mpl.use("Agg")
 from matplotlib import pyplot as plt
 import ros_numpy
 from scipy.spatial.transform import Rotation
