@@ -13,9 +13,8 @@ preprocessor:
     class: "contact_graspnet.preprocessing.ZClipper"
     z_range: [0.2, 1.8]
   segmentation_binarizer:
-    null
-    # class: "contact_graspnet.preprocessing.SegmentationBinarizer"
-    # segmentation_id: 1.0
+    class: "contact_graspnet.preprocessing.SegmentationBinarizer"
+    segmentation_id: 1.0
   resizer:
     null
     # class: "contact_graspnet.preprocessing.Resizer"
@@ -24,6 +23,5 @@ preprocessor:
 postprocessor:
   class: "contact_graspnet.postprocessing.Postprocessor"
   top_score_filter:
-    null
-    # class: "contact_graspnet.postprocessing.TopSoreFilter"
-    # top_k: 3
+    class: "contact_graspnet.postprocessing.TopSoreFilter"
+    top_k: 50

@@ -57,16 +57,9 @@ class ContactGraspNetPlannerService:
         self._device = config["model"]["device"]
 
     def _create_sample(self, req: GraspPlannerRequest) -> YCBSimulationDataSample:
-        rgb = torch.from_numpy(ros_numpy.numpify(req.color_image)).permute(2, 0, 1)
-        depth = torch.unsqueeze(
-            torch.from_numpy(
-                (ros_numpy.numpify(req.depth_image) / 1000).astype(np.float32)
-            ),
-            0,
-        )
-        seg = torch.unsqueeze(torch.from_numpy(ros_numpy.numpify(req.seg_image)), 0)
-        # pc = torch.from_numpy(ros_numpy.numpify(req.cloud))
-        pc = np.array([])
+        rgb = ros_numpy.numpify(req.color_image)
+        depth = (ros_numpy.numpify(req.depth_image) / 1000).astype(np.float32)
+        seg = ros_numpy.numpify(req.seg_image)
         camera_matrix = np.array(req.camera_info.K).reshape(3, 3)
         camera_trafo_h = ros_numpy.numpify(
             req.view_point.pose
@@ -75,7 +68,7 @@ class ContactGraspNetPlannerService:
         sample = YCBSimulationDataSample(
             rgb=rgb,
             depth=depth,
-            points=pc,
+            points=None,
             segmentation=seg,
             cam_intrinsics=camera_matrix,
             cam_pos=camera_trafo_h[:3, 3],
@@ -98,10 +91,7 @@ class ContactGraspNetPlannerService:
             pose.pose.position.y = g.center[1]
             pose.pose.position.z = g.center[2]
 
-            # to let the robot gripper point to the flor we first need to rotate around the z-axis by 180°
-            # the gripper axis is along the robot eef y axis but the grasp angle is given wrt. the x axis
-            # therfore we need to add 90° to the grasp angle
-            quat = Rotation.from_euler("xyz", [np.pi, 0, g.angle + np.pi / 2]).as_quat()
+            quat = Rotation.from_matrix(g.orientation).as_quat()
             pose.pose.orientation.x = quat[0]
             pose.pose.orientation.y = quat[1]
             pose.pose.orientation.z = quat[2]
@@ -109,14 +99,15 @@ class ContactGraspNetPlannerService:
 
             grasp_msg.pose = pose
 
-            grasp_msg.score.data = g.quality
+            grasp_msg.score.data = g.score
             grasp_msg.width.data = g.width
 
             response.grasp_candidates.append(grasp_msg)
 
         return response
 
-    def _save_debug_information(self, sample, grasps_img, grasps_world):
+    def _save_debug_information(self, sample, grasps_cam, grasps_world):
+        # TODO
         pass
 
     def srv_handler(self, req: GraspPlannerRequest) -> GraspPlannerResponse:
@@ -126,32 +117,29 @@ class ContactGraspNetPlannerService:
         logging.info(f"Processing datapoint: {sample}")
 
         input_tensor = self._preprocessor(sample)
-        input_tensor = input_tensor.to(self._device)
-        input_tensor = input_tensor.unsqueeze(0)
 
-        with torch.no_grad():
-            output = self._model(input_tensor)
+        output = self._model(input_tensor)
 
         # the number of candidates to return is given in the service request
         # therefore we need to overwrrite the value in the postprocessor
-        self._postprocessor.grasp_localizer.grasps = req.n_of_candidates
+        self._postprocessor.top_score_filter.n_candidates = req.n_of_candidates
 
-        grasps_img = self._postprocessor(output)
-        logging.info(f"Found {len(grasps_img)} grasps")
+        grasps_cam = self._postprocessor(output)
+        logging.info(f"Found {len(grasps_cam)} grasps")
 
         grasps_world = [
-            self._img2world_converter(
-                g_img,
+            self._cam2world_converter(
+                g_cam,
                 sample.depth,
                 sample.cam_intrinsics,
                 sample.cam_rot,
                 sample.cam_pos,
             )
-            for g_img in grasps_img
+            for g_cam in grasps_cam
         ]
 
         logging.info("saving debug information")
-        self._save_debug_information(sample, grasps_img, grasps_world)
+        self._save_debug_information(sample, grasps_cam, grasps_world)
 
         response = self._create_response(grasps_world)
         logging.info("Created response")
