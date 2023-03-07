@@ -10,6 +10,7 @@ from uuid import uuid4
 import yaml
 import matplotlib as mpl
 from PIL import Image
+from matplotlib import pyplot as plt
 
 import ros_numpy
 from scipy.spatial.transform import Rotation
@@ -29,6 +30,7 @@ from contact_graspnet.datatypes import YCBSimulationDataSample, GraspWorld
 from contact_graspnet.utils.config import module_from_config
 from contact_graspnet.utils.misc import setup_tensorflow
 from contact_graspnet.utils.export import Exporter
+from contact_graspnet.utils import visualization as vis
 
 # from contact_graspnet.utils.visualization import mlab_pose_vis
 
@@ -97,7 +99,23 @@ class ContactGraspNetPlannerService:
             pose.pose.position.y = g.position[1]
             pose.pose.position.z = g.position[2]
 
-            quat = Rotation.from_matrix(g.orientation).as_quat()
+            # the paper assumes a different coordinate system than the simulation for the gripper
+            # z-axis is the same, however in the paper the gripper axis is defined along the (oriented) x-axis
+            # but in the simulation the gripper axis is along the y-axis
+            # a=R_paper[:,2] -> z'=R'[:,2]
+            # c=R_paper[:,1] -> x'=-R'[:,0] (to keep everythinh orthogonal we need to add -)
+            # b=R_paper[:,0] -> y'=R'[:,1]
+            orientation = np.empty_like(g.orientation)
+            orientation[:, 2] = g.orientation[:, 2]
+            orientation[:, 0] = -g.orientation[:, 1]
+            orientation[:, 1] = g.orientation[:, 0]
+
+            quat = Rotation.from_matrix(orientation).as_quat()
+
+            # print(g.orientation)
+            # print(orientation)
+            # print(quat)
+
             pose.pose.orientation.x = quat[0]
             pose.pose.orientation.y = quat[1]
             pose.pose.orientation.z = quat[2]
@@ -112,30 +130,51 @@ class ContactGraspNetPlannerService:
 
         return response
 
-    def _save_debug_information(
-        self, grasps_world, sample_rgb, full_pc, full_pc_colors, export_name
-    ):
+    def _save_debug_information(self, grasps_world, sample, full_pc):
+        full_pc_colors = self._preprocessor.intermediate_results["full_pc_colors"]
+
+        POINT_REDUCTION_FACTOR = 10
+        pc_world = np.array(
+            [
+                self._cam2world_converter.coord_converter(
+                    p, sample.cam_pos, sample.cam_rot
+                )
+                for p in full_pc[::POINT_REDUCTION_FACTOR]
+            ]
+        )
+        best_grasp_world = max(grasps_world, key=lambda g: g.score)
+        # logging.info(best_grasp_world.orientation)
+
+        fig = plt.figure(figsize=(10, 10))
+        ax = fig.add_subplot(projection="3d", computed_zorder=False)
+        vis.grasp6D_ax(
+            ax,
+            best_grasp_world,
+            pc_world,
+            full_pc_colors[::POINT_REDUCTION_FACTOR],
+            pointsize=1,
+        )
+        vis.set_axes_equal(ax)
+        plt.close(fig)
+
         export_data = {
+            "visualiazation": fig,
+            "grasps_world": grasps_world,
             "grasps_paper_cam": self._postprocessor.intermediate_results[
                 "all_grasps_paper"
             ],
-            "grasps_world": grasps_world,
-            "sample_rgb": Image.fromarray(sample_rgb),
+            "sample_rgb": Image.fromarray(sample.rgb),
             "full_pc": full_pc,
             "full_pc_colors": full_pc_colors,
-            # "segmented_pc": segmented_pc,
-            # "segmented_pc_colors": preprocessor.intermediate_results[
-            #     "segmented_pc_colors"
-            # ],
         }
 
-        self._exporter(export_data, export_name)
+        self._exporter(export_data, sample.name)
 
     def srv_handler(self, req: GraspPlannerRequest) -> GraspPlannerResponse:
         logging.info("Received service call")
 
         sample = self._create_sample(req)
-        logging.info(f"Processing datapoint: {sample}")
+        # logging.info(f"Processing datapoint: {sample}")
 
         full_pc, segmented_pc = self._preprocessor(sample)
 
@@ -160,10 +199,8 @@ class ContactGraspNetPlannerService:
         logging.info("saving debug information")
         self._save_debug_information(
             grasps_world,
-            sample.rgb,
+            sample,
             full_pc,
-            self._preprocessor.intermediate_results["full_pc_colors"],
-            sample.name,
         )
 
         response = self._create_response(grasps_world)
