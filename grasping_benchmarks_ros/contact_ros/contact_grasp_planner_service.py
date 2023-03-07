@@ -113,10 +113,13 @@ class ContactGraspNetPlannerService:
         return response
 
     def _save_debug_information(
-        self, grasps_cam, grasps_world, sample_rgb, full_pc, full_pc_colors, export_name
+        self, grasps_world, sample_rgb, full_pc, full_pc_colors, export_name
     ):
         export_data = {
-            "grasps_cam": grasps_cam,
+            "grasps_paper_cam": self._postprocessor.intermediate_results[
+                "all_grasps_paper"
+            ],
+            "grasps_world": grasps_world,
             "sample_rgb": Image.fromarray(sample_rgb),
             "full_pc": full_pc,
             "full_pc_colors": full_pc_colors,
@@ -156,7 +159,6 @@ class ContactGraspNetPlannerService:
 
         logging.info("saving debug information")
         self._save_debug_information(
-            grasps_cam,
             grasps_world,
             sample.rgb,
             full_pc,
