@@ -5,6 +5,7 @@ import logging
 import importlib
 import time
 from typing import List
+from uuid import uuid4
 
 import yaml
 import matplotlib as mpl
@@ -82,7 +83,7 @@ class GRConvNetGraspPlannerService:
             cam_intrinsics=camera_matrix,
             cam_pos=camera_trafo_h[:3, 3],
             cam_rot=camera_trafo_h[:3, :3],
-            name=time.strftime("%Y%m%d-%H%M%S"),
+            name=f"{time.strftime('%Y%m%d-%H%M%S')}__{uuid4()}",
         )
 
         return sample
