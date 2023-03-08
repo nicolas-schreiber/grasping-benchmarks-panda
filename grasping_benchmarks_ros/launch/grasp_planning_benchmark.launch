@@ -133,4 +133,20 @@
     </node>
   </group>
 
+  <!-- Run ggcnn Grasp Planner -->
+  <group if="$(optenv GRASP_BENCHMARK_GGCNN false)">
+    <!-- args can be passed via the command line so they might be useful to overwrite certain aspects of the launch files config -->
+    <arg name="ns" default="ggcnn_bench" />
+    <arg name="grasp_planner_node_name" default="ggcnn_grasp_planner_node" />
+    <arg name="grasp_planner_service_name" default="ggcnn_grasp_planner_service" />
+    <arg name="debug_path" default="$(find grasping_benchmarks_ros)/ggcnn_ros/debug_information" />
+
+    <node name="$(arg grasp_planner_node_name)" pkg="grasping_benchmarks_ros" type="ggcnn_grasp_planner_service.py" ns="$(arg ns)" output="screen">
+      <!-- we define multiple parameters on the nodes namespace which are saved to the ROS parameter server -->
+      <param name="grasp_planner_service_name" value="$(arg grasp_planner_service_name)" />
+      <param name="debug_path" value="$(arg debug_path)" />
+    </node>
+  </group>
+
+
 </launch>
