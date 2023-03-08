@@ -81,7 +81,9 @@ class ContactGraspNetPlannerService:
 
             pose.pose.position.x = g.position[0]
             pose.pose.position.y = g.position[1]
-            pose.pose.position.z = g.position[2]
+            pose.pose.position.z = g.position[
+                2
+            ]  # TODO compare results with negative z-offset (~2cm)
 
             pose.pose.orientation.w = g.orientation[0]
             pose.pose.orientation.x = g.orientation[1]
