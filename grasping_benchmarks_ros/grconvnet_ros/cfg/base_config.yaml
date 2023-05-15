@@ -1,0 +1,47 @@
+model:
+  class: "grconvnet.models.GenerativeResnet"
+  constructor: "from_jit"
+  jit_path: "cornell-randsplit-rgbd-grconvnet3-drop1-ch32/epoch_15_iou_97.pt"
+  device: "cuda"
+
+preprocessor:
+  class: "grconvnet.preprocessing.Preprocessor"
+  reformatter:
+    class: "grconvnet.preprocessing.CenterCropResized"
+    size: [224, 224]
+  masker:
+    class: "grconvnet.preprocessing.Masker"
+    negative_value: [255, 255, 255]
+    positive_value: [0, 0, 0]
+
+postprocessor:
+  class: "grconvnet.postprocessing.Postprocessor"
+  q_blurrer:
+    class: "grconvnet.postprocessing.SkGaussian"
+    sigma: 2
+  angle_blurrer:
+    class: "grconvnet.postprocessing.SkGaussian"
+    sigma: 2
+  width_blurrer:
+    class: "grconvnet.postprocessing.SkGaussian"
+    sigma: 1
+  width_scaler:
+    class: "grconvnet.postprocessing.Scaler"
+    factor: 150
+  grasp_localizer:
+    class: "grconvnet.postprocessing.GraspLocalizer"
+    min_distance: 20
+    threshold: 0.2
+    n_grasps: 3
+
+img2world_converter:
+  class: "grconvnet.postprocessing.Img2WorldConverter"
+  coord_converter:
+    class: "grconvnet.postprocessing.Img2WorldCoordConverter"
+  decropper:
+    class: "grconvnet.postprocessing.DeCenterCropResized"
+  height_adjuster:
+    class: "grconvnet.postprocessing.GraspHeightAdjuster"
+    min_height: 0.001
+    target_grasp_depth: 0.03
+  # max_gripper_width: 0.08
